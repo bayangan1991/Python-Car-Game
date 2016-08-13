@@ -17,6 +17,7 @@ def gameLoop(gameDisplay):
 	objs = []
 	obst = []
 	bgs = []
+	lanes = [80,165,250,335,420]
 	for x in range(2):
 		BG = objects.bg('assets/fullroad.png',500,600,500,600)
 		BG.offset = 600 * x
@@ -29,9 +30,9 @@ def gameLoop(gameDisplay):
 	
 	for x in range(3):
 		newOp = objects.opponent('assets/racecar2.png',120,120,64,100)
-		newOp.hoffset = 50 + (x * 150)
-		newOp.voffset = 150 * x
-		newOp.speed = x + 1
+		newOp.hoffset = lanes[x] - (newOp.boxwidth / 2)
+		newOp.voffset = [250,0,500][x]
+		newOp.speed = 0.8 * (x + 1) 
 		objs.append(newOp)
 		obst.append(newOp)
 
@@ -112,18 +113,15 @@ def gameLoop(gameDisplay):
 
 			
 			for o in obst:
-				o.setpos((o.hoffset,((passed + o.voffset) % (display_height + o.boxheight)) - o.boxheight))
-				if collision == False:
-					collided = P1.hascollided(o)
-					if collided[0]:
-						collision = True
-						if collided[1] != 0:
-							y_change = dif * (min(max(int(collided[1]),-1),1))
-						if collided[1] > collided[2]:
-							x_change = x_change * -1
-							P1.setang(P1.angle / 2)
+				o.setpos((o.hoffset,(((passed + o.voffset) * o.speed) % (display_height + o.boxheight)) - o.boxheight))
+				collided = P1.hascollided(o)
+				if collided[0]:
+					if collided[1] != 0:
+						y_change = dif * (min(max(int(collided[1]),-1),1))
+					if collided[1] > collided[2]:
+						x_change = x_change * -1
+						P1.setang(P1.angle / 2)
 			
-			collision = False
 
 
 			#CHECK AND CHANGE Y POSITION
