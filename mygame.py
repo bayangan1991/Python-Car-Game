@@ -39,7 +39,7 @@ def gameLoop(gameDisplay):
 	keyUP = 0
 	keyDOWN = 0
 	passed = 0
-	dif = 4
+	dif = 6
 	while not gameExit:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
