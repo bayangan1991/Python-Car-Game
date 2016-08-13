@@ -16,6 +16,10 @@ def gameLoop(gameDisplay):
 	gamePaused = False
 	objs = []
 	obst = []
+	BG1 = objects.car('assets/fullroad.png',500,600,500,600)
+	objs.append(BG1)
+	BG2 = objects.car('assets/fullroad.png',500,600,500,600)
+	objs.append(BG2)
 	P1 = objects.car('assets/racecar1.png',120,120,64,100)
 	objs.append(P1)
 	B1 = objects.car('assets/racecar2.png',120,120,64,100)
@@ -120,12 +124,14 @@ def gameLoop(gameDisplay):
 			elif car_Ny > 0:
 				P1.move((0,y_change + (dif / 2) + (abs(keyRIGHT - keyLEFT) / 2)))
 
+			BG1.setpos((0,((passed * 2) % display_height) - 600))
+			BG2.setpos((0,((passed * 2) % display_height) + 0))
 			B1.setpos((50,(passed % (display_height + B1.boxheight)) - B1.boxheight))
 			B2.setpos((300,((passed + 300) % (display_height + B2.boxheight)) - B2.boxheight))
 			passed += dif
 
 		#DRAW TO FRAME
-		gameDisplay.fill(colour.DavyGrey)
+		#gameDisplay.fill(colour.DavyGrey)
 		for o in objs:
 			o.draw(gameDisplay)
 
