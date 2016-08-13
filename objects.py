@@ -69,9 +69,15 @@ class gameObject():
 		c = (self.width / 2) + (obj.width / 2) - abs(self.center()[0] - obj.center()[0])
 		return b >= 0 and c >= 0, b, c
 
-class crate(gameObject):
-	type = 'crate'
-	timeoffset = 0
+class opponent(gameObject):
+	type = 'opponent'
+	speed = 0
+	hoffset = 0
+	voffset = 0
+
+class bg(gameObject):
+	type = 'bg'
+	offset = 0
 
 class car(gameObject):
 	type = 'car'

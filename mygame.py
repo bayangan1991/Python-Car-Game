@@ -16,18 +16,24 @@ def gameLoop(gameDisplay):
 	gamePaused = False
 	objs = []
 	obst = []
-	BG1 = objects.car('assets/fullroad.png',500,600,500,600)
-	objs.append(BG1)
-	BG2 = objects.car('assets/fullroad.png',500,600,500,600)
-	objs.append(BG2)
+	bgs = []
+	for x in range(2):
+		BG = objects.bg('assets/fullroad.png',500,600,500,600)
+		BG.offset = 600 * x
+		objs.append(BG)
+		bgs.append(BG)
+		
+		
 	P1 = objects.car('assets/racecar1.png',120,120,64,100)
 	objs.append(P1)
-	B1 = objects.car('assets/racecar2.png',120,120,64,100)
-	objs.append(B1)
-	obst.append(B1)
-	B2 = objects.car('assets/racecar2.png',120,120,64,100)
-	objs.append(B2)
-	obst.append(B2)
+	
+	for x in range(3):
+		newOp = objects.opponent('assets/racecar2.png',120,120,64,100)
+		newOp.hoffset = 50 + (x * 150)
+		newOp.voffset = 150 * x
+		newOp.speed = x + 1
+		objs.append(newOp)
+		obst.append(newOp)
 
 	startPos = [(display_width / 2) - (P1.boxwidth / 2),(display_height / 2) - (P1.boxheight / 2)]
 	P1.setpos(startPos)
@@ -39,7 +45,9 @@ def gameLoop(gameDisplay):
 	keyUP = 0
 	keyDOWN = 0
 	passed = 0
-	dif = 6
+	dif = 2
+	difmod = 0
+	collision = False
 	while not gameExit:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -102,15 +110,20 @@ def gameLoop(gameDisplay):
 			if car_Nx < display_width - P1.boxwidth + 25 and car_Nx > -25:
 				P1.move((x_change,0))
 
+			
 			for o in obst:
-				collided = P1.hascollided(o)
-				
-				if collided[0]:
-					if collided[1] != 0:
-						y_change = dif * (min(max(int(collided[1]),-1),1))
-					if collided[1] > collided[2]:
-						x_change = x_change * -2
-						P1.setang(P1.angle / 2)
+				o.setpos((o.hoffset,((passed + o.voffset) % (display_height + o.boxheight)) - o.boxheight))
+				if collision == False:
+					collided = P1.hascollided(o)
+					if collided[0]:
+						collision = True
+						if collided[1] != 0:
+							y_change = dif * (min(max(int(collided[1]),-1),1))
+						if collided[1] > collided[2]:
+							x_change = x_change * -1
+							P1.setang(P1.angle / 2)
+			
+			collision = False
 
 
 			#CHECK AND CHANGE Y POSITION
@@ -120,16 +133,17 @@ def gameLoop(gameDisplay):
 				P1.setpos(startPos)
 				x_change = 0
 				y_change = 0
+				difmod = 0
+				passed = 0
 				gamePaused = True
 			elif car_Ny > 0:
-				P1.move((0,y_change + (dif / 2) + (abs(keyRIGHT - keyLEFT) / 2)))
-
-			BG1.setpos((0,((passed * 2) % display_height) - 600))
-			BG2.setpos((0,((passed * 2) % display_height) + 0))
-			B1.setpos((50,(passed % (display_height + B1.boxheight)) - B1.boxheight))
-			B2.setpos((300,((passed + 300) % (display_height + B2.boxheight)) - B2.boxheight))
-			passed += dif
-
+				P1.move((0,y_change + ((dif + difmod) / 2) + (abs(keyRIGHT - keyLEFT) / 2)))
+				
+			for b in bgs:
+				b.setpos((0,((passed * 2) % display_height) - b.offset))
+				
+			passed += dif + difmod
+			difmod = round(min(3.9,difmod + 0.002),3)
 		#DRAW TO FRAME
 		#gameDisplay.fill(colour.DavyGrey)
 		for o in objs:
