@@ -45,8 +45,9 @@ class gameObject():
 		d.blit(o,self.position)
 		return None
 	def move(self,offset):
-		self.position = [x + y for x, y in zip(self.position,offset)]
-		return None
+		newpos = [x + y for x, y in zip(self.position,offset)]
+		self.position = newpos
+		return self.xdelta
 	def setpos(self,target):
 		self.position = target
 		return None

@@ -53,7 +53,7 @@ def gameLoop(gameDisplay):
 	keyUP = 0
 	keyDOWN = 0
 	passed = 0
-	dif = 2
+	dif = 1
 	difmod = 0
 	collision = False
 	while not gameExit:
@@ -116,18 +116,17 @@ def gameLoop(gameDisplay):
 
 			#CHECK AND CHANGE X POSITION
 			if car_Nx < display_width - P1.boxwidth + 25 and car_Nx > -25:
-				P1.move((x_change,0))
+				print(P1.move((x_change,0)))
 
-			
+			collision = False
 			for o in obst:
 				o.setpos((o.hoffset,(((passed + o.voffset) * o.speed) % (display_height + o.boxheight)) - o.boxheight))
-				if o.position[1] == 0:
-					score += 1
-					print(score)
 				collided = P1.hascollided(o)
 				if collided[0]:
+					collision = True
 					if collided[1] != 0:
-						y_change = dif * (min(max(int(collided[1]),-1),1))
+						print(y_change)
+						y_change = (dif + difmod) * (min(max(int(collided[1]),-1),1))
 					if collided[1] > collided[2]:
 						x_change = x_change * -1
 						P1.setang(P1.angle / 2)
@@ -148,12 +147,11 @@ def gameLoop(gameDisplay):
 				P1.move((0,y_change + ((dif + difmod) / 2) + (abs(keyRIGHT - keyLEFT) / 2)))
 				
 			for b in bgs:
-				b.setpos((0,((passed * 2) % display_height) - b.offset))
+				b.setpos((0,((passed * 2.5) % display_height) - b.offset))
 				
 			passed += dif + difmod
 			difmod = round(min(3.9,difmod + 0.002),3)
 		#DRAW TO FRAME
-		#gameDisplay.fill(colour.DavyGrey)
 		for o in objs:
 			o.draw(gameDisplay)
 
