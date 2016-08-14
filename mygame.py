@@ -17,7 +17,12 @@ def gameLoop(gameDisplay):
 	objs = []
 	obst = []
 	bgs = []
-	lanes = [80,165,250,335,420]
+	
+	hlanes = [80,165,250,335,420]
+	vlanes = [250,0,500,300,0]
+	lanespeed = [1,0.5,1.5,0.8,1.8]
+	score = 0
+	
 	for x in range(2):
 		BG = objects.bg('assets/fullroad.png',500,600,500,600)
 		BG.offset = 600 * x
@@ -28,16 +33,18 @@ def gameLoop(gameDisplay):
 	P1 = objects.car('assets/racecar1.png',120,120,64,100)
 	objs.append(P1)
 	
-	for x in range(3):
+	startPos = [(display_width / 2) - (P1.boxwidth / 2),(display_height / 2) - (P1.boxheight / 2)]
+	P1.setpos(startPos)
+	
+	for x in range(5):
 		newOp = objects.opponent('assets/racecar2.png',120,120,64,100)
-		newOp.hoffset = lanes[x] - (newOp.boxwidth / 2)
-		newOp.voffset = [250,0,500][x]
-		newOp.speed = 0.8 * (x + 1) 
+		newOp.hoffset = hlanes[x] - (newOp.boxwidth / 2)
+		newOp.voffset = vlanes[x]
+		newOp.speed = lanespeed[x]
 		objs.append(newOp)
 		obst.append(newOp)
 
-	startPos = [(display_width / 2) - (P1.boxwidth / 2),(display_height / 2) - (P1.boxheight / 2)]
-	P1.setpos(startPos)
+
 
 	x_change = 0
 	y_change = 0
@@ -114,6 +121,9 @@ def gameLoop(gameDisplay):
 			
 			for o in obst:
 				o.setpos((o.hoffset,(((passed + o.voffset) * o.speed) % (display_height + o.boxheight)) - o.boxheight))
+				if o.position[1] == 0:
+					score += 1
+					print(score)
 				collided = P1.hascollided(o)
 				if collided[0]:
 					if collided[1] != 0:
