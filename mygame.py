@@ -1,14 +1,12 @@
 import pygame
-import math
 import objects
-import colour
 
-display_width = 500
-display_height = 600
+g_displayWidth = 500
+g_displayHeight = 600
 
-mainDisplay = pygame.display.set_mode((display_width,display_height))
+g_displayWindow = pygame.display.set_mode((g_displayWidth,g_displayHeight))
 pygame.display.set_caption("A Bit Racey")
-clock = pygame.time.Clock()
+g_gameClock = pygame.time.Clock()
 pygame.init()
 
 def gameLoop(gameDisplay):
@@ -33,7 +31,7 @@ def gameLoop(gameDisplay):
 	P1 = objects.car('assets/racecar1.png',120,120,64,100)
 	objs.append(P1)
 	
-	startPos = [(display_width / 2) - (P1.boxwidth / 2),(display_height / 2) - (P1.boxheight / 2)]
+	startPos = [(g_displayWidth / 2) - (P1.boxwidth / 2),(g_displayHeight / 2) - (P1.boxheight / 2)]
 	P1.setpos(startPos)
 	
 	for x in range(5):
@@ -41,10 +39,9 @@ def gameLoop(gameDisplay):
 		newOp.hoffset = hlanes[x] - (newOp.boxwidth / 2)
 		newOp.voffset = vlanes[x]
 		newOp.speed = lanespeed[x]
+		newOp.setpos((newOp.hoffset,newOp.voffset))
 		objs.append(newOp)
 		obst.append(newOp)
-
-
 
 	x_change = 0
 	y_change = 0
@@ -105,36 +102,26 @@ def gameLoop(gameDisplay):
 			
 			car_Nx = car_pos[0] + x_change
 			car_Ny = car_pos[1] + y_change
-			
-			#ANGLE
-			if P1.angle != 0 and (keyRIGHT - keyLEFT) == 0:
-				#DECREASE ANGLE
-				P1.setang(P1.angle - (P1.angle / abs(P1.angle)))
-			else:
-				#INCREASE ANGLE
-				P1.setang(max(min(10,P1.angle - (keyRIGHT - keyLEFT)),-10))
-
-			#CHECK AND CHANGE X POSITION
-			if car_Nx < display_width - P1.boxwidth + 25 and car_Nx > -25:
-				print(P1.move((x_change,0)))
 
 			collision = False
 			for o in obst:
-				o.setpos((o.hoffset,(((passed + o.voffset) * o.speed) % (display_height + o.boxheight)) - o.boxheight))
+				o.move((1,(dif + difmod) * o.speed))
+				if o.position[1] > g_displayHeight:
+					o.setpos((o.position[0],-o.boxheight))
 				collided = P1.hascollided(o)
 				if collided[0]:
 					collision = True
 					if collided[1] != 0:
-						print(y_change)
 						y_change = (dif + difmod) * (min(max(int(collided[1]),-1),1))
 					if collided[1] > collided[2]:
 						x_change = x_change * -1
-						P1.setang(P1.angle / 2)
+
+			#CHECK AND CHANGE X POSITION
+			if car_Nx > g_displayWidth - P1.boxwidth + 25 or car_Nx < -25:
+				x_change = 0
 			
-
-
 			#CHECK AND CHANGE Y POSITION
-			if car_Ny > display_height - P1.height:
+			if car_Ny > g_displayHeight - P1.height:
 				##Crashed##
 				P1.setang(0)
 				P1.setpos(startPos)
@@ -143,11 +130,13 @@ def gameLoop(gameDisplay):
 				difmod = 0
 				passed = 0
 				gamePaused = True
-			elif car_Ny > 0:
-				P1.move((0,y_change + ((dif + difmod) / 2) + (abs(keyRIGHT - keyLEFT) / 2)))
+			elif car_Ny < 0:
+				y_change = 0
+
+			P1.move((x_change,y_change + ((dif + difmod) / 2) + (abs(keyRIGHT - keyLEFT) / 2)))
 				
 			for b in bgs:
-				b.setpos((0,((passed * 2.5) % display_height) - b.offset))
+				b.setpos((0,((passed * 2.5) % g_displayHeight) - b.offset))
 				
 			passed += dif + difmod
 			difmod = round(min(3.9,difmod + 0.002),3)
@@ -157,9 +146,9 @@ def gameLoop(gameDisplay):
 
 		#UPDATE DISPLAY
 		pygame.display.update()
-		clock.tick(60)
+		g_gameClock.tick(60)
 
 
-gameLoop(mainDisplay)
+gameLoop(g_displayWindow)
 pygame.quit()
 quit()
