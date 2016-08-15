@@ -123,7 +123,11 @@ def gameLoop(gameDisplay):
 							x = 1
 						y_change = ((dif + difmod) * o.speed) * x
 					if collided[1] > collided[2]:
-						x_change = x_change * -1
+						if o.center()[0] > P1.center()[0]:
+							x = -1
+						else:
+							x = 1
+						x_change = x * abs(x_change)
 
 			#CHECK AND CHANGE X POSITION
 			if car_Nx > g_displayWidth - P1.boxwidth + 25 or car_Nx < -25:
