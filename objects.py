@@ -15,6 +15,35 @@ def direction(d1, d2):
 	rad = math.atan2(dx,dy)
 	return rad * (180 / math.pi)
 
+class textObject():
+	position = [0,0]
+	width = 0
+	height = 0
+	text = ''
+	font = ''
+	fontsize = 0
+	colour = [0,0,0]
+
+	def __init__(self,text,font,fontsize,colour,pos):
+		self.text = text
+		self.position = pos
+		self.font = font
+		self.fontsize = fontsize
+		self.colour = colour
+	def text_objects(self, text, font):
+		textSurface = font.render(text, True, self.colour)
+		return textSurface, textSurface.get_rect()
+	def drawCenter(self,d):
+		myfont = pygame.font.Font(self.font,self.fontsize)
+		TextSurf, TextRect = self.text_objects(self.text, myfont)
+		TextRect.center = self.position
+		d.blit(TextSurf, TextRect)
+	def draw(self,d):
+		myfont = pygame.font.Font(self.font,self.fontsize)
+		TextSurf, TextRect = self.text_objects(self.text, myfont)
+		d.blit(TextSurf, self.position)
+
+
 class gameObject():
 	position = [0,0]
 	boxwidth = 0
