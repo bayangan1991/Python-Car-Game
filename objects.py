@@ -38,7 +38,6 @@ class gameObject():
 		return None
 	def move(self,offset):
 		newpos = [x + y for x, y in zip(self.position,offset)]
-		self.angle = offset[0] * -1.5
 		self.position = newpos
 		return None
 	def setpos(self,target):
@@ -77,6 +76,11 @@ class car(gameObject):
 	    rot_rect.center = rot_image.get_rect().center
 	    rot_image = rot_image.subsurface(rot_rect).copy()
 	    return rot_image
+	def move(self,offset):
+		newpos = [x + y for x, y in zip(self.position,offset)]
+		self.angle = offset[0] * -1.5
+		self.position = newpos
+		return None
 	def draw(self,d):
 		o = self.rot_center(self.img,self.angle)
 		d.blit(o,self.position)

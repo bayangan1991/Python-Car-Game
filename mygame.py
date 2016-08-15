@@ -4,9 +4,11 @@ import objects
 g_displayWidth = 500
 g_displayHeight = 600
 
+pygame.display.set_caption("PyRacing")
+
 g_displayWindow = pygame.display.set_mode((g_displayWidth,g_displayHeight))
-pygame.display.set_caption("A Bit Racey")
 g_gameClock = pygame.time.Clock()
+
 pygame.init()
 
 def gameLoop(gameDisplay):
@@ -52,7 +54,7 @@ def gameLoop(gameDisplay):
 	passed = 0
 	dif = 1
 	difmod = 0
-	collision = False
+
 	while not gameExit:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -103,16 +105,18 @@ def gameLoop(gameDisplay):
 			car_Nx = car_pos[0] + x_change
 			car_Ny = car_pos[1] + y_change
 
-			collision = False
 			for o in obst:
-				o.move((1,(dif + difmod) * o.speed))
+				o.move((0,(dif + difmod) * o.speed))
 				if o.position[1] > g_displayHeight:
 					o.setpos((o.position[0],-o.boxheight))
 				collided = P1.hascollided(o)
 				if collided[0]:
-					collision = True
 					if collided[1] != 0:
-						y_change = (dif + difmod) * (min(max(int(collided[1]),-1),1))
+						if o.center()[1] > P1.center()[1]:
+							x = -1
+						else:
+							x = 1
+						y_change = ((dif + difmod) * o.speed) * x
 					if collided[1] > collided[2]:
 						x_change = x_change * -1
 
@@ -129,9 +133,11 @@ def gameLoop(gameDisplay):
 				y_change = 0
 				difmod = 0
 				passed = 0
+				for Op in obst:
+					Op.setpos((Op.hoffset,Op.voffset))
 				gamePaused = True
-			elif car_Ny < 0:
-				y_change = 0
+			elif car_Ny <= 0:
+				y_change = 1
 
 			P1.move((x_change,y_change + ((dif + difmod) / 2) + (abs(keyRIGHT - keyLEFT) / 2)))
 				
