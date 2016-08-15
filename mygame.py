@@ -54,7 +54,7 @@ def gameLoop(gameDisplay):
 	keyUP = 0
 	keyDOWN = 0
 	passed = 0
-	dif = 2
+	dif = 0
 	difmod = 0
 	score = 0
 	highscore = 0
@@ -160,7 +160,7 @@ def gameLoop(gameDisplay):
 				b.setpos((0,((passed * 2.5) % g_displayHeight) - b.offset))
 				
 			passed += dif + difmod
-			difmod = round(min(3.9,difmod + 0.002),3)
+			difmod = round(min(5.9,difmod + 0.001),3)
 		#DRAW TO FRAME
 		for o in objs:
 			o.draw(gameDisplay)
