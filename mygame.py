@@ -52,8 +52,10 @@ def gameLoop(gameDisplay):
 	keyUP = 0
 	keyDOWN = 0
 	passed = 0
-	dif = 1
+	dif = 2
 	difmod = 0
+	score = 0
+	highscore = 0
 
 	while not gameExit:
 		for event in pygame.event.get():
@@ -109,6 +111,7 @@ def gameLoop(gameDisplay):
 				o.move((0,(dif + difmod) * o.speed))
 				if o.position[1] > g_displayHeight:
 					o.setpos((o.position[0],-o.boxheight))
+					score += 1
 				collided = P1.hascollided(o)
 				if collided[0]:
 					if collided[1] != 0:
@@ -133,6 +136,9 @@ def gameLoop(gameDisplay):
 				y_change = 0
 				difmod = 0
 				passed = 0
+				highscore = max(score,highscore)
+				print(score,highscore)
+				score = 0
 				for Op in obst:
 					Op.setpos((Op.hoffset,Op.voffset))
 				gamePaused = True
