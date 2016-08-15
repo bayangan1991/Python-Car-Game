@@ -127,7 +127,7 @@ def gameLoop(gameDisplay):
 							x = -1
 						else:
 							x = 1
-						x_change = x * abs(x_change)
+						x_change = x * (abs(x_change) + 0.5)
 
 			#CHECK AND CHANGE X POSITION
 			if car_Nx > g_displayWidth - P1.boxwidth + 25 or car_Nx < -25:
