@@ -15,7 +15,7 @@ def direction(d1, d2):
 	rad = math.atan2(dx,dy)
 	return rad * (180 / math.pi)
 
-class textObject():
+class TextObject():
 	position = [0,0]
 	width = 0
 	height = 0
@@ -44,7 +44,7 @@ class textObject():
 		d.blit(TextSurf, self.position)
 
 
-class gameObject():
+class GameObject():
 	position = [0,0]
 	boxwidth = 0
 	boxheight = 0
@@ -76,12 +76,12 @@ class gameObject():
 		self.angle = target
 		return None
 
-class bg(gameObject):
-	type = 'bg'
+class Background(GameObject):
+	type = 'Background'
 	offset = 0
 
-class car(gameObject):
-	type = 'car'
+class Car(GameObject):
+	type = 'Car'
 
 	def hascollided(self,obj):
 		b = (self.height / 2) + (obj.height / 2) - abs(self.center()[1] - obj.center()[1])
@@ -115,8 +115,8 @@ class car(gameObject):
 		d.blit(o,self.position)
 		return None
 
-class opponent(car):
-	type = 'opponent'
+class Opponent(Car):
+	type = 'Opponent'
 	speed = 0
 	hoffset = 0
 	voffset = 0
