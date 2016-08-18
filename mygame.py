@@ -1,7 +1,7 @@
 import pygame
 import objects
 import time
-import colour
+from colour import Colour
 
 g_displayWidth = 500
 g_displayHeight = 600
@@ -142,7 +142,7 @@ def gameLoop(gameDisplay):
 				difmod = 0
 				passed = 0
 				highscore = max(score,highscore)
-				msg = objects.TextObject('Score: %i/%i' % (score,highscore),'freesansbold.ttf',40,colour.Red,(g_displayWidth/2,g_displayHeight/2)).drawCenter(gameDisplay)
+				msg = objects.TextObject('Score: %i/%i' % (score,highscore),'freesansbold.ttf',40,Colour.Red,(g_displayWidth/2,g_displayHeight/2)).drawCenter(gameDisplay)
 				pygame.display.update()
 				time.sleep(2)
 				del msg
