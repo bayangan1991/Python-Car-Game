@@ -38,6 +38,7 @@ def gameLoop(gameDisplay):
 	_P1.setpos(_startPos)
 	
 	for x in range(5):
+<<<<<<< HEAD
 		__newOp = objects.Opponent('assets/racecar2.png',120,120,64,100)
 		__newOp.hoffset = _hlanes[x] - (__newOp.boxwidth / 2)
 		__newOp.voffset = _vlanes[x]
@@ -59,6 +60,29 @@ def gameLoop(gameDisplay):
 	_highscore = 0
 
 	while not _gameExit:
+=======
+		newOp = objects.opponent('assets/racecar2.png',120,120,64,100)
+		newOp.hoffset = hlanes[x] - (newOp.boxwidth / 2)
+		newOp.voffset = vlanes[x]
+		newOp.speed = lanespeed[x]
+		newOp.setpos((newOp.hoffset,newOp.voffset))
+		objs.append(newOp)
+		obst.append(newOp)
+
+	x_change = 0
+	y_change = 0
+	keyRIGHT = 0
+	keyLEFT = 0
+	keyUP = 0
+	keyDOWN = 0
+	passed = 0
+	dif = 0
+	difmod = 0
+	score = 0
+	highscore = 0
+
+	while not gameExit:
+>>>>>>> origin/master
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				_gameExit = True
@@ -158,8 +182,13 @@ def gameLoop(gameDisplay):
 			for b in _bgs:
 				b.setpos((0,((_passed * 2.5) % g_displayHeight) - b.offset))
 				
+<<<<<<< HEAD
 			_passed += _dif + _difmod
 			_difmod = round(min(3.9,_difmod + 0.002),3)
+=======
+			passed += dif + difmod
+			difmod = round(min(5.9,difmod + 0.001),3)
+>>>>>>> origin/master
 		#DRAW TO FRAME
 		for o in _objs:
 			o.draw(gameDisplay)
