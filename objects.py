@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import pygame
 import math
 
@@ -38,6 +40,8 @@ class Vector():
 		d = [a - b for a,b in zip(other.__repr__(),self.__repr__())]
 		rad = math.atan2(d[0],d[1])
 		return rad * (180 / math.pi)
+	def t(self):
+		return (self.x,self.y)
 
 class Group():
 	def __init__(self):
@@ -79,7 +83,7 @@ class Sprite():
 	def __getitem__(self,index):
 		return None
 	def draw(self,d):
-		d.blit(self.img,(self.position.x,self.position.y))
+		d.blit(self.img,self.position.t())
 		return None
 	def move(self,offset):
 		self.position = self.position + offset
@@ -118,9 +122,9 @@ class TextObject():
 		myfont = pygame.font.Font(self.font,self.fontsize)
 		TextSurf, TextRect = self.text_objects(self.text, myfont)
 		if self.drawcenter:
-			TextRect.center = self.position
+			TextRect.center = self.position.t()
 		else:
-			TextRect.position = self.position
+			TextRect.position = self.position.t()
 		d.blit(TextSurf, TextRect)
 		return None
 	def __enter__(self):
@@ -148,7 +152,7 @@ class Car(Sprite):
 		return None
 	def draw(self,d):
 		o = self.rotate(self.img,self.angle)
-		d.blit(o,(self.position.x,self.position.y))
+		d.blit(o,self.position.t())
 		return None
 
 class Background(Sprite):
