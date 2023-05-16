@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Ryan Barnes <ryan.bayangan@gmail.com>"]
 readme = "README.md"
-packages = [{include = "python_car_game"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
