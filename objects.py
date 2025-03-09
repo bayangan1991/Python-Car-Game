@@ -39,7 +39,7 @@ class Vector:
         rad = math.atan2(d[0], d[1])
         return rad * (180 / math.pi)
 
-    def t(self):
+    def origin(self):
         return self.x, self.y
 
 
@@ -74,9 +74,12 @@ class Group:
 
 class Sprite:
     All = Group()
+    graphics = {}
 
     def __init__(self, pth, box, size):
-        self.img = pygame.image.load(pth)
+        if pth not in Sprite.graphics:
+            Sprite.graphics[pth] = pygame.image.load(pth).convert_alpha()
+        self.img = Sprite.graphics[pth]
         self.size = size
         self.box = box
         self.angle = 0
@@ -88,7 +91,7 @@ class Sprite:
         Sprite.All.remove(self)
 
     def draw(self, d):
-        d.blit(self.img, self.position.t())
+        d.blit(self.img, self.position.origin())
 
     def move(self, offset):
         self.position = self.position + offset
@@ -138,9 +141,9 @@ class TextObject:
         font_obg = pygame.font.Font(self.font, self.fontsize)
         text_surf, text_rect = self.text_objects(self.text, font_obg)
         if self.drawcenter:
-            text_rect.center = self.position.t()
+            text_rect.center = self.position.origin()
         else:
-            text_rect.position = self.position.t()
+            text_rect.position = self.position.origin()
         d.blit(text_surf, text_rect)
 
 
@@ -165,7 +168,7 @@ class Car(Sprite):
 
     def draw(self, d):
         o = self.rotate(self.img, self.angle)
-        d.blit(o, self.position.t())
+        d.blit(o, self.position.origin())
 
 
 class Background(Sprite):

@@ -4,6 +4,7 @@ authors = [
 ]
 requires-python = "<4.0,>=3.10"
 dependencies = [
+    "pydantic>=2.10.6",
     "pygame>=2.4.0,<3.0.0",
 ]
 name = "python-car-game"
