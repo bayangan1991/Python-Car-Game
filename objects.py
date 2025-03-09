@@ -1,3 +1,4 @@
+import itertools
 import math
 
 import pygame
@@ -187,11 +188,20 @@ class Background(Sprite):
         Background.collection.remove(self)
 
 
+colours = itertools.cycle(
+    [(0, 50, 0), (50, 0, 0), (0, 0, 50), (50, 0, 50), (0, 50, 50)],
+)
+
+
 class Opponent(Car):
     collection = Group()
 
     def __init__(self, pth, box, size):
         super().__init__(pth, box, size)
+        self.mask = pygame.Surface(self.img.get_size()).convert_alpha()
+        self.mask.fill(next(colours))
+        self.img = self.img.copy()
+        self.img.blit(self.mask, (0, 0), special_flags=pygame.BLEND_ADD)
         Opponent.collection.add(self)
 
     def __del__(self):
