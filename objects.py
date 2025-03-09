@@ -1,59 +1,46 @@
-#!/usr/bin/python3
-
 import math
 
 import pygame
 
 
 class Vector:
-    def __init__(self, x=0, y=0):
+    def __init__(self, x=0.0, y=0.0):
         self.x = x
         self.y = y
-        return None
-
-    def __repr__(self):
-        return (self.x, self.y)
-
-    def __str__(self):
-        return str(self.__repr__())
 
     def __add__(self, offset):
         if isinstance(offset, Vector):
             return Vector(self.x + offset.x, self.y + offset.y)
-        else:
-            return Vector(self.x + offset, self.y + offset)
+        return Vector(self.x + offset, self.y + offset)
 
     def __sub__(self, offset):
         if isinstance(offset, Vector):
             return Vector(self.x - offset.x, self.y - offset.y)
-        else:
-            return Vector(self.x - offset, self.y - offset)
+        return Vector(self.x - offset, self.y - offset)
 
     def __mul__(self, offset):
         if isinstance(offset, Vector):
             return Vector(self.x * offset.x, self.y * offset.y)
-        else:
-            return Vector(self.x * offset, self.y * offset)
+        return Vector(self.x * offset, self.y * offset)
 
     def __truediv__(self, offset):
         if isinstance(offset, Vector):
             return Vector(self.x / offset.x, self.y / offset.y)
-        else:
-            return Vector(self.x / offset, self.y / offset)
+        return Vector(self.x / offset, self.y / offset)
 
     def distance(self, other):
         a = 0
-        for b, c in zip(self.__repr__(), other.__repr__()):
+        for b, c in zip(self.__repr__(), other.__repr__(), strict=False):
             a += (c - b) ** 2
         return math.sqrt(a)
 
     def direction(self, other):
-        d = [a - b for a, b in zip(other.__repr__(), self.__repr__())]
+        d = [a - b for a, b in zip(other.__repr__(), self.__repr__(), strict=False)]
         rad = math.atan2(d[0], d[1])
         return rad * (180 / math.pi)
 
     def t(self):
-        return (self.x, self.y)
+        return self.x, self.y
 
 
 class Group:
@@ -62,7 +49,7 @@ class Group:
 
     def add(self, obj, i=None):
         if obj not in self.members:
-            if i == None:
+            if i is None:
                 self.members.append(obj)
             else:
                 self.members.insert(i, obj)
@@ -73,7 +60,6 @@ class Group:
 
     def shift(self, obj, i):
         if obj in self.members:
-            hold = obj
             self.members.remove(obj)
             self.members.insert(i, obj)
 
@@ -101,37 +87,35 @@ class Sprite:
     def __del__(self):
         Sprite.All.remove(self)
 
-    def __getitem__(self, index):
-        return None
-
     def draw(self, d):
         d.blit(self.img, self.position.t())
-        return None
 
     def move(self, offset):
         self.position = self.position + offset
-        return None
 
     def setpos(self, target):
         self.position = target
-        return None
 
-    def setang(self, target):
+    def set_angle(self, target):
         self.angle = target
-        return None
 
+    @property
     def width(self):
         return self.size.x
 
+    @property
     def height(self):
         return self.size.y
 
-    def boxwidth(self):
+    @property
+    def box_width(self):
         return self.box.x
 
-    def boxheight(self):
+    @property
+    def box_height(self):
         return self.box.y
 
+    @property
     def center(self):
         return self.position - (self.box / 2)
 
@@ -145,43 +129,27 @@ class TextObject:
         self.colour = colour
         self.size = Vector()
         self.drawcenter = False
-        return None
 
     def text_objects(self, text, font):
-        textSurface = font.render(text, True, self.colour)
-        return textSurface, textSurface.get_rect()
+        text_surf = font.render(text, True, self.colour)
+        return text_surf, text_surf.get_rect()
 
     def draw(self, d):
-        myfont = pygame.font.Font(self.font, self.fontsize)
-        TextSurf, TextRect = self.text_objects(self.text, myfont)
+        font_obg = pygame.font.Font(self.font, self.fontsize)
+        text_surf, text_rect = self.text_objects(self.text, font_obg)
         if self.drawcenter:
-            TextRect.center = self.position.t()
+            text_rect.center = self.position.t()
         else:
-            TextRect.position = self.position.t()
-        d.blit(TextSurf, TextRect)
-        return None
-
-    def __enter__(self):
-        return None
-
-    def __exit__(self):
-        return None
+            text_rect.position = self.position.t()
+        d.blit(text_surf, text_rect)
 
 
 class Car(Sprite):
     type = "Car"
 
-    def hascollided(self, obj):
-        b = (
-            (self.height() / 2)
-            + (obj.height() / 2)
-            - abs(self.center().y - obj.center().y)
-        )
-        c = (
-            (self.width() / 2)
-            + (obj.width() / 2)
-            - abs(self.center().x - obj.center().x)
-        )
+    def has_collided(self, obj):
+        b = (self.height / 2) + (obj.height / 2) - abs(self.center.y - obj.center.y)
+        c = (self.width / 2) + (obj.width / 2) - abs(self.center.x - obj.center.x)
         return b >= 0 and c >= 0, b, c
 
     def rotate(self, image, angle):
@@ -189,34 +157,26 @@ class Car(Sprite):
         rot_image = pygame.transform.rotate(image, angle)
         rot_rect = orig_rect.copy()
         rot_rect.center = rot_image.get_rect().center
-        rot_image = rot_image.subsurface(rot_rect).copy()
-        return rot_image
+        return rot_image.subsurface(rot_rect).copy()
 
     def move(self, offset):
         self.angle = offset.x * -1.5
         self.position = self.position + offset
-        return None
 
     def draw(self, d):
         o = self.rotate(self.img, self.angle)
         d.blit(o, self.position.t())
-        return None
 
 
 class Background(Sprite):
     collection = Group()
 
     def __init__(self, pth, box, size):
-        self.img = pygame.image.load(pth)
-        self.size = size
-        self.box = box
-        self.angle = 0
-        self.position = Vector()
-        Sprite.All.add(self)
+        super().__init__(pth, box, size)
         Background.collection.add(self)
 
     def __del__(self):
-        Sprite.All.remove(self)
+        super().__del__()
         Background.collection.remove(self)
 
 
@@ -224,14 +184,9 @@ class Opponent(Car):
     collection = Group()
 
     def __init__(self, pth, box, size):
-        self.img = pygame.image.load(pth)
-        self.size = size
-        self.box = box
-        self.angle = 0
-        self.position = Vector()
-        Sprite.All.add(self)
+        super().__init__(pth, box, size)
         Opponent.collection.add(self)
 
     def __del__(self):
-        Sprite.All.remove(self)
+        super().__del__()
         Opponent.collection.remove(self)

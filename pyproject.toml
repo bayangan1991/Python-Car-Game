@@ -1,18 +1,30 @@
-[tool.poetry]
+[project]
+authors = [
+    { name = "Ryan Barnes", email = "ryan.bayangan@gmail.com" },
+]
+requires-python = "<4.0,>=3.10"
+dependencies = [
+    "pygame<3.0.0,>=2.4.0",
+]
 name = "python-car-game"
 version = "0.1.0"
 description = ""
-authors = ["Ryan Barnes <ryan.bayangan@gmail.com>"]
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pygame = "^2.4.0"
+[dependency-groups]
+dev = [
+    "ruff>=0.9.10",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-black = "^23.3.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN",
+    "PLR",
+    "D",
+    "E501",
+    "S104",
+    "S311",
+    "T201",
+    "C901",
+]

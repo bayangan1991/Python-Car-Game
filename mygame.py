@@ -3,103 +3,109 @@ import random
 import time
 
 import pygame
+from pygame.event import Event
 
 import objects
 from colour import Colour
 from objects import Vector
 
 # Global Declare
-g_displayWidth = 500
-g_displayHeight = 600
-g_display = Vector(g_displayWidth, g_displayHeight)
+DISPLAY_WIDTH = 500
+DISPLAY_HEIGHT = 600
+DISPLAY = Vector(DISPLAY_WIDTH, DISPLAY_HEIGHT)
 
 # Create Pygame Window
-g_displayWindow = pygame.display.set_mode(g_display.t())
-g_gameClock = pygame.time.Clock()
+DISPLAY_WINDOW = pygame.display.set_mode(DISPLAY.t())
+GAME_CLOCK = pygame.time.Clock()
 pygame.init()
 pygame.display.set_caption("PyRacing")
 
 
-def gameLoop(gameDisplay):
-    gameExit = False
-    gamePaused = True
+def game_loop(game_display):
+    game_exit = False
+    game_paused = True
 
-    hlanes = [75, 170, 255, 325, 418]
-    vlanes = [-120, -120, -120, -120, -120]
-    lanespeed = [0, 0, 0, 0, 0]
+    h_lanes = [75, 170, 255, 325, 418]
+    v_lanes = [-120, -120, -120, -120, -120]
+    lane_speeds = [0, 0, 0, 0, 0]
     score = 0
     x_change = 0
     y_change = 0
-    keyRIGHT = 0
-    keyLEFT = 0
-    keyUP = 0
-    keyDOWN = 0
+    key_right = 0
+    key_left = 0
+    key_up = 0
+    key_down = 0
     passed = 0
     dif = 2
-    difmod = 0
+    dif_mod = 0
     score = 0
     highscore = 0
     opponents = list(range(5))
 
     # Load background
     for x in range(2):
-        BG = objects.Background(
-            "assets/fullroad.png", Vector(500, 600), Vector(500, 600)
+        bg = objects.Background(
+            "assets/fullroad.png",
+            Vector(500, 600),
+            Vector(500, 600),
         )
-        BG.offset = 600 * x
+        bg.offset = 600 * x
 
     # Load Player Car
-    P1 = objects.Car("assets/racecar1.png", Vector(120, 120), Vector(64, 100))
-    P1.name = "player"
+    player = objects.Car("assets/racecar1.png", Vector(120, 120), Vector(64, 100))
+    player.name = "player"
 
     # Set Stating position
-    startPos = (g_display / 2) - (P1.box / 2)
-    P1.position = startPos
+    start_pos = (DISPLAY / 2) - (player.box / 2)
+    player.position = start_pos
 
-    # Load Obstacles
+    # Load Opponents
     for x in range(5):
-        newOp = objects.Opponent(
+        new_opponent = objects.Opponent(
             "assets/racecar2.png",
             Vector(120, 120),
             Vector(64, 100),
         )
-        newOp.speed = lanespeed[x]
-        newOp.hoffset = hlanes[x] - (newOp.boxwidth() / 2)
-        newOp.voffset = vlanes[x]
-        newOp.setpos(Vector(newOp.hoffset, newOp.voffset))
-        newOp.name = "opp%i" % x
+        new_opponent.speed = lane_speeds[x]
+        new_opponent.hoffset = h_lanes[x] - (new_opponent.box_width / 2)
+        new_opponent.voffset = v_lanes[x]
+        new_opponent.setpos(Vector(new_opponent.hoffset, new_opponent.voffset))
+        new_opponent.name = f"opp{x:d}"
 
     # GameLoop
-    while not gameExit:
+    while not game_exit:
         # Read Events
         for event in pygame.event.get():
-            # Exit if window quits
-            if event.type == pygame.QUIT:
-                gameExit = True
+            match event:
+                # Game State Events
+                case Event(type=pygame.QUIT):
+                    game_exit = True
+                case Event(type=pygame.KEYUP, key=pygame.K_SPACE):
+                    game_paused = not game_paused
+                case Event(type=pygame.KEYUP, key=pygame.K_ESCAPE):
+                    game_exit = True
 
-            # Read key Values
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    keyLEFT = 1
-                elif event.key == pygame.K_RIGHT:
-                    keyRIGHT = 1
-                elif event.key == pygame.K_UP:
-                    keyUP = 1
-                elif event.key == pygame.K_DOWN:
-                    keyDOWN = 1
-                elif event.key == pygame.K_SPACE:
-                    gamePaused = not gamePaused
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
-                    keyLEFT = 0
-                elif event.key == pygame.K_RIGHT:
-                    keyRIGHT = 0
-                elif event.key == pygame.K_UP:
-                    keyUP = 0
-                elif event.key == pygame.K_DOWN:
-                    keyDOWN = 0
-                elif event.key == pygame.K_ESCAPE:
-                    gameExit = True
+                # Player input
+                case Event(
+                    type=pygame.KEYDOWN | pygame.KEYUP as event_type,
+                    key=pygame.K_LEFT,
+                ):
+                    key_left = 1 if event_type == pygame.KEYDOWN else 0
+                case Event(
+                    type=pygame.KEYDOWN | pygame.KEYUP as event_type,
+                    key=pygame.K_RIGHT,
+                ):
+                    key_right = 1 if event_type == pygame.KEYDOWN else 0
+                case Event(
+                    type=pygame.KEYDOWN | pygame.KEYUP as event_type,
+                    key=pygame.K_UP,
+                ):
+                    key_up = 1 if event_type == pygame.KEYDOWN else 0
+                case Event(
+                    type=pygame.KEYDOWN | pygame.KEYUP as event_type,
+                    key=pygame.K_DOWN,
+                ):
+                    key_down = 1 if event_type == pygame.KEYDOWN else 0
 
         # Start running cars
         while len(opponents) > 2:
@@ -110,108 +116,105 @@ def gameLoop(gameDisplay):
             ) + 0.5
 
         # Run Simulation
-        if not gamePaused:
+        if not game_paused:
             # ADJUST MOVE DELTA
-            if x_change != 0 and keyRIGHT - keyLEFT == 0:
+            if x_change != 0 and key_right - key_left == 0:
                 # DECREASE X SPEED
                 x_change = round(x_change - ((x_change / abs(x_change)) / 4), 3)
             else:
                 # INCREASE X SPEED
-                x_change = max(min(x_change + ((keyRIGHT - keyLEFT) / 2), 5), -5)
+                x_change = max(min(x_change + ((key_right - key_left) / 2), 5), -5)
 
-            if y_change != 0 and keyDOWN - keyUP == 0:
+            if y_change != 0 and key_down - key_up == 0:
                 # DECREASE Y SPEED
                 y_change = round(y_change - ((y_change / abs(y_change)) / 10), 3)
             else:
                 # INCREASE Y SPEED
-                y_change = max(min(y_change + ((keyDOWN - keyUP) / 2), 4), -4)
+                y_change = max(min(y_change + ((key_down - key_up) / 2), 4), -4)
 
             # CHECK POSITION
-            car_pos = P1.position
+            car_pos = player.position
 
-            car_Nx = car_pos.x + x_change
-            car_Ny = car_pos.y + y_change
+            car_new_x = car_pos.x + x_change
+            car_new_y = car_pos.y + y_change
 
             for i, o in enumerate(objects.Opponent.collection.members):
-                o.move(Vector(0, (dif + difmod) * o.speed))
-                if o.position.y > g_displayHeight:
+                o.move(Vector(0, (dif + dif_mod) * o.speed))
+                if o.position.y > DISPLAY_HEIGHT:
                     o.speed = 0
-                    o.setpos(Vector(o.position.x, -o.boxheight()))
+                    o.setpos(Vector(o.position.x, -o.box_height))
                     opponents.append(i)
                     score += 1
-                collided = P1.hascollided(o)
+                collided = player.has_collided(o)
                 if collided[0]:
                     if collided[1] != 0:
-                        if o.center().y > P1.center().y:
-                            x = -1
-                        else:
-                            x = 1
-                        y_change = ((dif + difmod) * o.speed) * x
+                        x = -1 if o.center.y > player.center.y else 1
+                        y_change = ((dif + dif_mod) * o.speed) * x
                     if collided[1] > collided[2]:
-                        if o.center().x > P1.center().x:
-                            x = -1
-                        else:
-                            x = 1
+                        x = -1 if o.center.x > player.center.x else 1
                         x_change = x * (abs(x_change) + 0.5)
 
             # CHECK AND CHANGE X POSITION
-            if car_Nx > g_displayWidth - P1.boxwidth() + (P1.width() / 2) or car_Nx < -(
-                P1.width() / 2
-            ):
+            if car_new_x > DISPLAY_WIDTH - player.box_width + (
+                player.width / 2
+            ) or car_new_x < -(player.width / 2):
                 x_change = 0
 
             # CHECK FOR Y CONDITIONS
-            if car_Ny > g_displayHeight - P1.height():
+            if car_new_y > DISPLAY_HEIGHT - player.height:
                 # PLAYER HIT BOTTOM OF SCREEN : DISPLAY SCORE AND RESET
                 highscore = max(score, highscore)
-                msgtxt = "Score: %i/%i" % (score, highscore)
-                msg = objects.TextObject(
-                    msgtxt, "freesansbold.ttf", 40, Colour.Red, g_display / 2
+                message_text = f"Score: {score:d}/{highscore:d}"
+                message = objects.TextObject(
+                    message_text,
+                    "freesansbold.ttf",
+                    40,
+                    Colour.Red,
+                    DISPLAY / 2,
                 )
-                msg.drawcenter = True
-                msg.draw(gameDisplay)
+                message.drawcenter = True
+                message.draw(game_display)
                 pygame.display.update()
-                P1.setang(0)
-                P1.setpos(startPos)
+                player.set_angle(0)
+                player.setpos(start_pos)
                 x_change = 0
                 y_change = 0
-                difmod = 0
+                dif_mod = 0
                 passed = 0
                 time.sleep(2)
-                del msg
+                del message
                 score = 0
-                for Op in objects.Opponent.collection.members:
-                    Op.setpos(Vector(Op.hoffset, Op.voffset))
-                gamePaused = True
-            elif car_Ny <= 0:
+                for opponent in objects.Opponent.collection.members:
+                    opponent.setpos(Vector(opponent.hoffset, opponent.voffset))
+                game_paused = True
+            elif car_new_y <= 0:
                 # PLAYER HIT TOP OF SCREEN
                 y_change = 1
 
             # MOVE PLAYER
-            P1.move(
+            player.move(
                 Vector(
                     x_change,
-                    y_change + ((dif + difmod) / 2) + (abs(keyRIGHT - keyLEFT) / 2),
-                )
+                    y_change + ((dif + dif_mod) / 2) + (abs(key_right - key_left) / 2),
+                ),
             )
 
             # MOVE OPPONENTS
             for b in objects.Background.collection.members:
-                b.setpos(Vector(0, ((passed * 2.5) % g_displayHeight) - b.offset))
+                b.setpos(Vector(0, ((passed * 2.5) % DISPLAY_HEIGHT) - b.offset))
 
             # INCREMENT PASSED TIME AND INCREASE DIFFICULTY
-            passed += dif + difmod
-            difmod = round(min(3.9, difmod + 0.002), 3)
+            passed += dif + dif_mod
+            dif_mod = round(min(3.9, dif_mod + 0.002), 3)
 
         # DRAW TO FRAME
-        objects.Sprite.All.draw(gameDisplay)
+        objects.Sprite.All.draw(game_display)
 
         # UPDATE DISPLAY
         pygame.display.update()
-        g_gameClock.tick(60)
+        GAME_CLOCK.tick(60)
 
 
 # START GAME LOOP
-gameLoop(g_displayWindow)
+game_loop(DISPLAY_WINDOW)
 pygame.quit()
-quit()
