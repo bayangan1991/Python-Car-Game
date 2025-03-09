@@ -151,9 +151,13 @@ class Car(Sprite):
     type = "Car"
 
     def has_collided(self, obj):
-        b = (self.height / 2) + (obj.height / 2) - abs(self.center.y - obj.center.y)
-        c = (self.width / 2) + (obj.width / 2) - abs(self.center.x - obj.center.x)
-        return b >= 0 and c >= 0, b, c
+        collide_y = (
+            (self.height / 2) + (obj.height / 2) - abs(self.center.y - obj.center.y)
+        )
+        collide_x = (
+            (self.width / 2) + (obj.width / 2) - abs(self.center.x - obj.center.x)
+        )
+        return collide_y >= 0 and collide_x >= 0, collide_y, collide_x
 
     def rotate(self, image, angle):
         orig_rect = image.get_rect()
