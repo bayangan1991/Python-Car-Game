@@ -2,11 +2,10 @@ import random
 
 import pygame
 
-import objects
-from colour import Colour
-from constants import DISPLAY, DISPLAY_HEIGHT, DISPLAY_WIDTH, H_LANES, V_LANES
-from objects import Vector
-from schemas import GameState, PlayerState
+from .colour import Colour
+from .constants import DISPLAY, DISPLAY_HEIGHT, DISPLAY_WIDTH, H_LANES, V_LANES
+from .objects import Background, Car, Opponent, Sprite, TextObject, Vector
+from .schemas import GameState, PlayerState
 
 
 def game_loop(game_display):
@@ -14,7 +13,7 @@ def game_loop(game_display):
     state = GameState()
     # Load background
     for direction in range(2):
-        bg = objects.Background(
+        bg = Background(
             "assets/fullroad.png",
             Vector(500, 600),
             Vector(500, 600),
@@ -22,7 +21,7 @@ def game_loop(game_display):
         bg.offset = 600 * direction
 
     # Load Player Car
-    player = objects.Car("assets/racecar1.png", Vector(120, 120), Vector(64, 100))
+    player = Car("assets/racecar1.png", Vector(120, 120), Vector(64, 100))
     player.name = "player"
 
     # Set Stating position
@@ -31,7 +30,7 @@ def game_loop(game_display):
 
     # Load Opponents
     for direction in range(len(state.opponents)):
-        new_opponent = objects.Opponent(
+        new_opponent = Opponent(
             "assets/racecar2.png",
             Vector(120, 120),
             Vector(64, 100),
@@ -53,9 +52,7 @@ def game_loop(game_display):
         while len(state.opponents) > 2:
             chosen = random.choice(state.opponents)
             state.opponents.remove(chosen)
-            objects.Opponent.collection.members[chosen].speed = (
-                random.random() * 2
-            ) + 0.4
+            Opponent.collection.members[chosen].speed = (random.random() * 2) + 0.4
 
         # Run Simulation
         if not state.paused:
@@ -66,7 +63,7 @@ def game_loop(game_display):
             car_new_x = car_pos.x + state.player.x_change
             car_new_y = car_pos.y + state.player.y_change
 
-            for i, opponent in enumerate(objects.Opponent.collection.members):
+            for i, opponent in enumerate(Opponent.collection.members):
                 # Update opponent position
                 opponent.move(
                     Vector(
@@ -110,7 +107,7 @@ def game_loop(game_display):
                 # PLAYER HIT BOTTOM OF SCREEN : DISPLAY SCORE AND RESET
                 state.highscore = max(state.player.score, state.highscore)
                 message_text = f"Score: {state.player.score:d}/{state.highscore:d}"
-                message = objects.TextObject(
+                message = TextObject(
                     message_text,
                     "freesansbold.ttf",
                     40,
@@ -124,7 +121,7 @@ def game_loop(game_display):
                 player.setpos(start_pos)
                 pygame.time.wait(2000)
                 del message
-                for opponent in objects.Opponent.collection.members:
+                for opponent in Opponent.collection.members:
                     opponent.setpos(Vector(opponent.hoffset, opponent.voffset))
                 state.paused = True
                 state.player = PlayerState()
@@ -144,7 +141,7 @@ def game_loop(game_display):
             )
 
             # MOVE OPPONENTS
-            for b in objects.Background.collection.members:
+            for b in Background.collection.members:
                 b.setpos(
                     Vector(
                         0,
@@ -160,7 +157,7 @@ def game_loop(game_display):
             )
 
         # DRAW TO FRAME
-        objects.Sprite.All.draw(game_display)
+        Sprite.All.draw(game_display)
 
         # UPDATE DISPLAY
         pygame.display.update()
