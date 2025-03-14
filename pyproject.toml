@@ -12,6 +12,9 @@ version = "0.1.0"
 description = ""
 readme = "README.md"
 
+[project.scripts]
+pyracing = 'pyracing'
+
 [dependency-groups]
 dev = [
     "ruff>=0.9.10",
