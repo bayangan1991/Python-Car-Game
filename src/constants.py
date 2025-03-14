@@ -1,4 +1,4 @@
-from objects import Vector
+from .objects import Vector
 
 DISPLAY_WIDTH = 500
 DISPLAY_HEIGHT = 600
