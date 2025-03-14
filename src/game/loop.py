@@ -21,7 +21,7 @@ def game_loop(game_display):
         bg.offset = 600 * direction
 
     # Load Player Car
-    player = Car("assets/racecar1.png", Vector(120, 120), Vector(64, 100))
+    player = Car("red", Vector(120, 120), Vector(64, 100))
     player.name = "player"
 
     # Set Stating position
@@ -31,7 +31,6 @@ def game_loop(game_display):
     # Load Opponents
     for direction in range(len(state.opponents)):
         new_opponent = Opponent(
-            "assets/racecar2.png",
             Vector(120, 120),
             Vector(64, 100),
         )

@@ -155,6 +155,22 @@ class TextObject:
 class Car(Sprite):
     type = "Car"
 
+    def __init__(self, colour, box, size) -> None:
+        pth = "assets/car-body.png"
+        super().__init__(pth, box, size)
+        self.img = self.img.copy()
+
+        mask_path = "assets/car-mask.png"
+        if mask_path not in Sprite.graphics:
+            Sprite.graphics[mask_path] = pygame.image.load(
+                root / mask_path,
+            ).convert_alpha()
+        self.body = Sprite.graphics[mask_path].copy()
+        self.mask = pygame.Surface(self.img.get_size()).convert_alpha()
+        self.mask.fill(colour)
+        self.body.blit(self.mask, (0, 0), special_flags=pygame.BLEND_MULT)
+        self.img.blit(self.body, (0, 0))
+
     def has_collided(self, obj):
         collide_y = (
             (self.height / 2) + (obj.height / 2) - abs(self.center.y - obj.center.y)
@@ -193,19 +209,15 @@ class Background(Sprite):
 
 
 colours = itertools.cycle(
-    [(0, 50, 0), (50, 0, 0), (0, 0, 50), (50, 0, 50), (0, 50, 50)],
+    [(0, 150, 0), (150, 0, 0), (0, 0, 150), (150, 0, 150), (0, 150, 150)],
 )
 
 
 class Opponent(Car):
     collection = Group()
 
-    def __init__(self, pth, box, size):
-        super().__init__(pth, box, size)
-        self.mask = pygame.Surface(self.img.get_size()).convert_alpha()
-        self.mask.fill(next(colours))
-        self.img = self.img.copy()
-        self.img.blit(self.mask, (0, 0), special_flags=pygame.BLEND_ADD)
+    def __init__(self, box, size):
+        super().__init__(next(colours), box, size)
         Opponent.collection.add(self)
 
     def __del__(self):
