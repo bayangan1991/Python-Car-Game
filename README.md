@@ -18,14 +18,12 @@ Score is based on how many cars left the bottom of the screen
 
 ### Running the game
 
-You can this game with `uvx git+https://github.com/bayangan1991/Python-Car-Game pyracing`
+I use `uv` (and so should everyone else!).
 
-Only way to currently run the game is to install python. I use `uv` (and so should everyone else!).
-
-After cloning the repository can install dependencies using `uv sync`
-
-From there running the game is as simple as calling `uv run pyracing.py`
+You can run this game with `uvx git+https://github.com/bayangan1991/Python-Car-Game pyracing`
 
 ## Contributing
+
+After cloning the repository can install dependencies using `uv sync`
 
 I don't know why you would, but you're more than welcome to open a pull request
