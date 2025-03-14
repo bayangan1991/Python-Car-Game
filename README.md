@@ -6,7 +6,7 @@ You are the red car and your aim of the game is to not get pushed to the bottom 
 
 Score is based on how many cars left the bottom of the screen
 
-![](assets/screencap.png)
+![](src/assets/screencap.png)
 
 ### Controls
 

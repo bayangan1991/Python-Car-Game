@@ -167,11 +167,16 @@ def game_loop(game_display):
         game_clock.tick(60)
 
 
-# Create Pygame Window
-DISPLAY_WINDOW = pygame.display.set_mode(DISPLAY.origin())
-pygame.init()
-pygame.display.set_caption("PyRacing")
+def run_game():
+    display_window = pygame.display.set_mode(DISPLAY.origin())
+    pygame.init()
+    pygame.display.set_caption("PyRacing")
 
-# START GAME LOOP
-game_loop(DISPLAY_WINDOW)
-pygame.quit()
+    # START GAME LOOP
+    game_loop(display_window)
+    pygame.quit()
+
+
+# Create Pygame Window
+if __name__ == "__main__":
+    run_game()
