@@ -1,5 +1,6 @@
 import itertools
 import math
+from pathlib import Path
 
 import pygame
 
@@ -73,13 +74,16 @@ class Group:
             obj.draw(d)
 
 
+root = Path(__file__).parent
+
+
 class Sprite:
     All = Group()
     graphics = {}
 
     def __init__(self, pth, box, size):
         if pth not in Sprite.graphics:
-            Sprite.graphics[pth] = pygame.image.load(pth).convert_alpha()
+            Sprite.graphics[pth] = pygame.image.load(root / pth).convert_alpha()
         self.img = Sprite.graphics[pth]
         self.size = size
         self.box = box
