@@ -13,7 +13,7 @@ description = ""
 readme = "README.md"
 
 [project.scripts]
-pyracing = 'src.pyracing:run_game'
+pyracing = 'src.game.loop:run_game'
 
 [build-system]
 requires = ["hatchling"]

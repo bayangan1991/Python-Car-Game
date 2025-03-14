@@ -6,7 +6,7 @@ You are the red car and your aim of the game is to not get pushed to the bottom 
 
 Score is based on how many cars left the bottom of the screen
 
-![](src/assets/screencap.png)
+![](src/game/assets/screencap.png)
 
 ### Controls
 
@@ -17,6 +17,8 @@ Score is based on how many cars left the bottom of the screen
 | Esc    | Close the game         |
 
 ### Running the game
+
+You can this game with `uvx git+https://github.com/bayangan1991/Python-Car-Game pyracing`
 
 Only way to currently run the game is to install python. I use `uv` (and so should everyone else!).
 
