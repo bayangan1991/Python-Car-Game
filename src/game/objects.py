@@ -129,26 +129,29 @@ class Sprite:
 
 
 class TextObject:
-    def __init__(self, text, font, fontsize, colour, pos):
+    def __init__(self, *, text="", font, fontsize, colour, pos, align="center"):
         self.text = text
         self.position = pos
         self.font = font
         self.fontsize = fontsize
         self.colour = colour
         self.size = Vector()
-        self.drawcenter = False
+        self.align = align
+        self.font_obg = pygame.font.Font(self.font, self.fontsize)
 
     def text_objects(self, text, font):
         text_surf = font.render(text, True, self.colour)
         return text_surf, text_surf.get_rect()
 
     def draw(self, d):
-        font_obg = pygame.font.Font(self.font, self.fontsize)
-        text_surf, text_rect = self.text_objects(self.text, font_obg)
-        if self.drawcenter:
-            text_rect.center = self.position.origin()
-        else:
-            text_rect.position = self.position.origin()
+        text_surf, text_rect = self.text_objects(self.text, self.font_obg)
+        match self.align:
+            case "center":
+                text_rect.center = self.position.origin()
+            case "midleft":
+                text_rect.midleft = self.position.origin()
+            case "midright":
+                text_rect.midright = self.position.origin()
         d.blit(text_surf, text_rect)
 
 

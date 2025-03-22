@@ -1,4 +1,5 @@
 import random
+import time
 
 import pygame
 
@@ -40,6 +41,37 @@ def game_loop(game_display):
         new_opponent.setpos(Vector(new_opponent.hoffset, new_opponent.voffset))
         new_opponent.name = f"opp{direction:d}"
 
+    # OnScreen Objects
+    score_text = TextObject(
+        font="freesansbold.ttf",
+        fontsize=20,
+        colour=Colour.Red,
+        pos=Vector(40, DISPLAY.y - 50),
+        align="midleft",
+    )
+    time_text = TextObject(
+        font="freesansbold.ttf",
+        fontsize=20,
+        colour=Colour.Red,
+        pos=Vector(40, DISPLAY.y - 20),
+        align="midleft",
+    )
+    high_score_text = TextObject(
+        font="freesansbold.ttf",
+        fontsize=20,
+        colour=Colour.Red,
+        pos=Vector(DISPLAY.x - 40, DISPLAY.y - 50),
+        align="midright",
+    )
+    high_time_text = TextObject(
+        font="freesansbold.ttf",
+        fontsize=20,
+        colour=Colour.Red,
+        pos=Vector(DISPLAY.x - 40, DISPLAY.y - 20),
+        align="midright",
+    )
+
+    timer = None
     # GameLoop
     while not state.exit:
         # Read events and update game state
@@ -55,6 +87,7 @@ def game_loop(game_display):
 
         # Run Simulation
         if not state.paused:
+            timer = time.monotonic_ns()
             state.player.calculate_delta()
 
             # CHECK POSITION
@@ -104,22 +137,12 @@ def game_loop(game_display):
             # and clamp to screen height
             if car_new_y > DISPLAY_HEIGHT - player.height:
                 # PLAYER HIT BOTTOM OF SCREEN : DISPLAY SCORE AND RESET
-                state.highscore = max(state.player.score, state.highscore)
-                message_text = f"Score: {state.player.score:d}/{state.highscore:d}"
-                message = TextObject(
-                    message_text,
-                    "freesansbold.ttf",
-                    40,
-                    Colour.Red,
-                    DISPLAY / 2,
-                )
-                message.drawcenter = True
-                message.draw(game_display)
+                state.high_score = max(state.player.score, state.high_score)
+                state.high_time = max(state.player.time, state.high_time)
+
                 pygame.display.update()
                 player.set_angle(0)
                 player.setpos(start_pos)
-                pygame.time.wait(1000)
-                del message
                 for opponent in Opponent.collection.members:
                     opponent.setpos(Vector(opponent.hoffset, opponent.voffset))
                 state.paused = True
@@ -154,13 +177,38 @@ def game_loop(game_display):
                 min(3.9, state.player.score * 0.08),
                 3,
             )
-
         # DRAW TO FRAME
         Sprite.All.draw(game_display)
+
+        # Draw Text to the screen
+        score_text.text = f"Score | {state.player.score:d}"
+        score_text.draw(game_display)
+
+        total_seconds, remainder = divmod(state.player.time, 1_000_000_000)
+        minutes, seconds = divmod(total_seconds, 60)
+        milliseconds = remainder // 10_000_000
+        time_text.text = f"Time | {minutes:02d}:{seconds:02d}:{milliseconds:02d}"
+        time_text.draw(game_display)
+
+        if state.high_score:
+            high_score_text.text = f" {state.high_score:d} | High"
+            high_score_text.draw(game_display)
+
+        if state.high_time:
+            total_seconds, remainder = divmod(state.high_time, 1_000_000_000)
+            minutes, seconds = divmod(total_seconds, 60)
+            milliseconds = remainder // 10_000_000
+            high_time_text.text = (
+                f" {minutes:02d}:{seconds:02d}:{milliseconds:02d} | Best"
+            )
+            high_time_text.draw(game_display)
 
         # UPDATE DISPLAY
         pygame.display.update()
         game_clock.tick(60)
+
+        if not state.paused and timer:
+            state.player.time += time.monotonic_ns() - timer
 
 
 def run_game():

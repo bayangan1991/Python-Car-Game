@@ -12,6 +12,7 @@ class PlayerState(BaseModel):
     key_down: int = 0
     passed: float = 0
     score: int = 0
+    time: int = 0
     progress: float = 0
 
     def calculate_delta_x(self):
@@ -56,7 +57,8 @@ class PlayerState(BaseModel):
 class GameState(BaseModel):
     paused: bool = True
     exit: bool = False
-    highscore: int = 0
+    high_score: int = 0
+    high_time: int = 0
     difficulty: float = 2
     player: PlayerState = PlayerState()
     opponents: list[int] = list(range(5))
@@ -71,6 +73,7 @@ class GameState(BaseModel):
             case Event(type=pygame.KEYUP, key=pygame.K_SPACE):
                 self.paused = not self.paused
             case Event(type=pygame.KEYUP, key=pygame.K_UP) if self.paused:
+                self.player.key_up = 0
                 self.paused = False
 
             # Player input
