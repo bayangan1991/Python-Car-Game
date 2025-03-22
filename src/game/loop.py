@@ -118,7 +118,7 @@ def game_loop(game_display):
                 pygame.display.update()
                 player.set_angle(0)
                 player.setpos(start_pos)
-                pygame.time.wait(2000)
+                pygame.time.wait(1000)
                 del message
                 for opponent in Opponent.collection.members:
                     opponent.setpos(Vector(opponent.hoffset, opponent.voffset))

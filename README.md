@@ -20,7 +20,7 @@ Score is based on how many cars left the bottom of the screen
 
 I use `uv` (and so should everyone else!).
 
-You can run this game with `uvx git+https://github.com/bayangan1991/Python-Car-Game pyracing`
+You can run this game with `uvx --from git+https://github.com/bayangan1991/Python-Car-Game pyracing`
 
 ## Contributing
 
