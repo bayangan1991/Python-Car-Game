@@ -124,8 +124,8 @@ def game_loop(game_display):
                         ) * direction
                     if collide_x > collide_y:
                         direction = -1 if opponent.center.x > player.center.x else 1
-                        state.player.x_change = direction * (
-                            abs(state.player.x_change) + 0.5
+                        state.player.x_change = direction * abs(
+                            state.player.x_change * 0.75
                         )
 
             # CHECK AND CHANGE X POSITION
