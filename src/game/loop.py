@@ -40,6 +40,7 @@ def game_loop(game_display):
         new_opponent.voffset = V_LANES[direction]
         new_opponent.setpos(Vector(new_opponent.hoffset, new_opponent.voffset))
         new_opponent.name = f"opp{direction:d}"
+        new_opponent.draw_random()
 
     # OnScreen Objects
     score_text = TextObject(
@@ -110,6 +111,7 @@ def game_loop(game_display):
                     opponent.setpos(Vector(opponent.position.x, -opponent.box_height))
                     state.opponents.append(i)
                     state.player.score += 1
+                    opponent.draw_random()
 
                 # Check if the player has collided with an opponent
                 # and bounce based on current speed and difficulty
@@ -145,6 +147,7 @@ def game_loop(game_display):
                 player.setpos(start_pos)
                 for opponent in Opponent.collection.members:
                     opponent.setpos(Vector(opponent.hoffset, opponent.voffset))
+                pygame.time.wait(1000)
                 state.paused = True
                 state.player = PlayerState()
                 pygame.event.clear()

@@ -1,5 +1,7 @@
+import colorsys
 import itertools
 import math
+import random
 from pathlib import Path
 
 import pygame
@@ -157,21 +159,26 @@ class TextObject:
 
 class Car(Sprite):
     type = "Car"
+    mask_path = "assets/car-mask.png"
 
     def __init__(self, colour, box, size) -> None:
         pth = "assets/car-body.png"
         super().__init__(pth, box, size)
-        self.img = self.img.copy()
+        self.base_img = self.img.copy()
 
-        mask_path = "assets/car-mask.png"
-        if mask_path not in Sprite.graphics:
-            Sprite.graphics[mask_path] = pygame.image.load(
-                root / mask_path,
+        if self.mask_path not in Sprite.graphics:
+            Sprite.graphics[self.mask_path] = pygame.image.load(
+                root / self.mask_path,
             ).convert_alpha()
-        self.body = Sprite.graphics[mask_path].copy()
+        self.body = Sprite.graphics[self.mask_path].copy()
         self.mask = pygame.Surface(self.img.get_size()).convert_alpha()
+        self.draw_color(colour)
+
+    def draw_color(self, colour):
+        self.body = Sprite.graphics[self.mask_path].copy()
         self.mask.fill(colour)
         self.body.blit(self.mask, (0, 0), special_flags=pygame.BLEND_MULT)
+        self.img = self.base_img.copy()
         self.img.blit(self.body, (0, 0))
 
     def has_collided(self, obj):
@@ -220,9 +227,14 @@ class Opponent(Car):
     collection = Group()
 
     def __init__(self, box, size):
-        super().__init__(next(colours), box, size)
+        super().__init__("black", box, size)
         Opponent.collection.add(self)
 
     def __del__(self):
         super().__del__()
         Opponent.collection.remove(self)
+
+    def draw_random(self):
+        hue = random.random()
+        rgb = colorsys.hsv_to_rgb(hue, 1, 1)
+        self.draw_color(tuple(map(lambda v: int(255 * v), rgb)))
