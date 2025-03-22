@@ -151,7 +151,7 @@ def game_loop(game_display):
             # INCREMENT PASSED TIME AND INCREASE DIFFICULTY
             state.player.passed += state.difficulty + state.player.progress
             state.player.progress = round(
-                min(3.9, state.player.progress + 0.002),
+                min(3.9, state.player.score * 0.08),
                 3,
             )
 
