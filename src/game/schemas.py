@@ -68,7 +68,7 @@ class GameState(BaseModel):
                 Event(type=pygame.QUIT) | Event(type=pygame.KEYUP, key=pygame.K_ESCAPE)
             ):
                 self.exit = True
-            case Event(type=pygame.KEYUP, key=pygame.K_SPACE):
+            case Event(type=pygame.KEYUP, key=pygame.K_SPACE | pygame.K_UP):
                 self.paused = not self.paused
 
             # Player input
