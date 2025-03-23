@@ -236,5 +236,5 @@ class Opponent(Car):
 
     def draw_random(self):
         hue = random.random()
-        rgb = colorsys.hsv_to_rgb(hue, 1, 1)
+        rgb = colorsys.hsv_to_rgb(hue, 0.8, 0.7)
         self.draw_color(tuple(map(lambda v: int(255 * v), rgb)))
